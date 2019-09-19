@@ -30,23 +30,12 @@ Raspberry Pi project to act as a kind of pager (or secret communication device)
 * Write to an SD card using [Etcher](https://www.balena.io/etcher/)
 
 ## Configure the SD card
-* Add an empty file called `ssh` to the boot partition
-* Add a file called `wpa_supplicant.conf` to the boot partition, and fill with your WiFi settings
-```
-ctrl_interface=/run/wpa_supplicant
-update_config=1
-network={
-    ssid="<your first network SSID>"
-    psk="<your network password>"
-    key_mgmt=WPA-PSK
-}
-network={
-    ssid="<your second network SSID>"
-    psk="<your network password>"
-    key_mgmt=WPA-PSK
-}
-```
+* Copy the files from the [setup/boot] folder to the boot partiton
+** Add an empty file called `ssh` to the boot partition
+** Add a file called `wpa_supplicant.conf` to the boot partition, and fill with your WiFi settings
+
 * Turn the Raspberry Pi on
 * By default, it will appear on the network as "raspberrypi"
 * Log in using the standard Raspbian username and password
-* Configure the system by downloading the setup script and running it
+* Configure the system by downloading the setup script and running it:
+** ` curl https://raw.githubusercontent.com/secretheadquarters/pager/master/setup/setup.sh --output setup.sh && chmod +x setup.sh && ./setup.sh`
