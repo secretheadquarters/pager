@@ -31,11 +31,11 @@ Raspberry Pi project to act as a kind of pager (or secret communication device)
 
 ## Configure the SD card
 * Copy the files from the [setup/boot] folder to the boot partiton
-** Add an empty file called `ssh` to the boot partition
-** Add a file called `wpa_supplicant.conf` to the boot partition, and fill with your WiFi settings
+  * Add an empty file called `ssh` to the boot partition
+  * Add a file called `wpa_supplicant.conf` to the boot partition, and fill with your WiFi settings
 
 * Turn the Raspberry Pi on
 * By default, it will appear on the network as "raspberrypi"
 * Log in using the standard Raspbian username and password
 * Configure the system by downloading the setup script and running it:
-** ` curl https://raw.githubusercontent.com/secretheadquarters/pager/master/setup/setup.sh --output setup.sh && chmod +x setup.sh && ./setup.sh`
+  * `curl https://raw.githubusercontent.com/secretheadquarters/pager/master/setup/setup.sh --output setup.sh && chmod +x setup.sh && ./setup.sh`
