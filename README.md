@@ -39,4 +39,4 @@ Raspberry Pi project to act as a kind of pager (or secret communication device)
 * By default, it will appear on the network as "raspberrypi"
 * Log in using the standard Raspbian username and password
 * Configure the system by downloading the setup script and running it:
-  * `curl https://raw.githubusercontent.com/secretheadquarters/pager/master/setup/setup.sh --output setup.sh && chmod +x setup.sh && ./setup.sh`
+  * `curl https://raw.githubusercontent.com/secretheadquarters/pager/master/setup/setup.sh --output setup.sh && chmod +x setup.sh && sudo ./setup.sh`
