@@ -13,3 +13,5 @@ fi
 apt-get update
 
 raspi-config --expand-rootfs
+
+whiptail --msgbox "Now please reboot the system" 20 60 2
