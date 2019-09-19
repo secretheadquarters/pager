@@ -34,6 +34,7 @@ Raspberry Pi project to act as a kind of pager (or secret communication device)
   * Add an empty file called `ssh` to the boot partition
   * Add a file called `wpa_supplicant.conf` to the boot partition, and fill with your WiFi settings
 
+## Install the software
 * Turn the Raspberry Pi on
 * By default, it will appear on the network as "raspberrypi"
 * Log in using the standard Raspbian username and password
