@@ -11,7 +11,7 @@ if [ $? -eq 0 ]; then
 fi
 
 sudo apt-get update
-sudo apt-get --yes install git
+sudo apt-get --yes install git vim
 
 git clone https://github.com/secretheadquarters/pager.git
 
