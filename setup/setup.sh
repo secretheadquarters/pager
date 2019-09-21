@@ -15,6 +15,9 @@ sudo apt-get --yes install git
 
 git clone https://github.com/secretheadquarters/pager.git
 
-sudo raspi-config --expand-rootfs
+if ! crontab -l | grep pager/software/launch.sh; then
+  crontab -l | sed '$ a @reboot pager/software/launch.sh' | crontab
+fi
 
+sudo raspi-config --expand-rootfs
 whiptail --msgbox "Now please reboot the system" 20 60 2
