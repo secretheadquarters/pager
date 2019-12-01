@@ -29,6 +29,11 @@ Raspberry Pi project to act as a kind of pager (or secret communication device)
 * Downnload the image file: https://downloads.raspberrypi.org/raspbian_lite_latest
 * Write to an SD card using [Etcher](https://www.balena.io/etcher/)
 
+## Create an email account for the pager
+* If you're using gmail:
+  * Turn on two-factor authentication
+  * Generate an "App Password"
+
 ## Configure the SD card
 * Copy the files from the [setup/boot] folder to the boot partiton
   * Add an empty file called `ssh` to the boot partition
@@ -40,3 +45,4 @@ Raspberry Pi project to act as a kind of pager (or secret communication device)
 * Log in using the standard Raspbian username and password
 * Configure the system by downloading the setup script and running it:
   * `curl https://raw.githubusercontent.com/secretheadquarters/pager/master/setup/setup.sh --output setup.sh && chmod +x setup.sh && ./setup.sh`
+

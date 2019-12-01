@@ -11,9 +11,11 @@ if [ $? -eq 0 ]; then
 fi
 
 sudo apt-get update
-sudo apt-get --yes install git vim
+sudo apt-get --yes install git vim python3-venv
 
 git clone https://github.com/secretheadquarters/pager.git
+
+python -m venv pager/software/venv
 
 if ! crontab -l | grep pager/software/launch.sh; then
   crontab -l | sed '$ a @reboot pager/software/launch.sh' | crontab
