@@ -38,6 +38,7 @@ Raspberry Pi project to act as a kind of pager (or secret communication device)
 * Copy the files from the [setup/boot] folder to the boot partiton
   * Add an empty file called `ssh` to the boot partition
   * Add a file called `wpa_supplicant.conf` to the boot partition, and fill with your WiFi settings
+  * Make sure you use Unix line endings (\n)
 
 ## Install the software
 * Turn the Raspberry Pi on
