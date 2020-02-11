@@ -3,6 +3,7 @@ import datetime
 import time
 import email
 import re
+import smtplib
 
 # Fix the locale so we behave the same in all locations. 
 import locale
@@ -10,8 +11,14 @@ locale.setlocale(locale.LC_ALL, "C")
 
 from log import logger
 
-username_and_password = input("username password: ")
-(username, password) = username_and_password.split(" ", 1)
+imap_server = input("IMAP server: ")
+imap_username = input("IMAP username: ")
+imap_password = input("IMAP password: ")
+smtp_server = input("SMTP server: ")
+smtp_username = input("SMTP username: ")
+smtp_password = input("SMTP password: ")
+smtp_to = input("SMTP to: ")
+smtp_from = input("SMTP from: ")
 
 def show(mail):
   message = mail.get("Subject")
@@ -76,13 +83,24 @@ def get_command(mail):
 
 def send_response(result):
   if not result:
+    logger.debug("No command response (probably an info command)")
     return
+
+  message = email.message.EmailMessage()
+  message["Subject"] = "Response from pager"
+  message["To"] = smtp_to
+  message["From"] = smtp_from
+  message.set_content(result)
+
+  with smtplib.SMTP_SSL(smtp_server) as smtp:
+    smtp.login(smtp_username, smtp_password)
+    smtp.send_message(message)
 
   logger.debug(result)
 
 while (True):
-  with imapclient.IMAPClient("imap.gmail.com") as server:
-    server.login(username, password)
+  with imapclient.IMAPClient(imap_server) as server:
+    server.login(imap_username, imap_password)
     server.select_folder("INBOX")
 
     process_emails(server)
