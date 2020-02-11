@@ -87,7 +87,7 @@ def send_response(result):
     return
 
   message = email.message.EmailMessage()
-  message["Subject"] = "Response from pager"
+  message["Subject"] = "info: Response from pager"
   message["To"] = smtp_to
   message["From"] = smtp_from
   message.set_content(result)
@@ -98,31 +98,13 @@ def send_response(result):
 
   logger.debug(result)
 
-while (True):
-  with imapclient.IMAPClient(imap_server) as server:
-    server.login(imap_username, imap_password)
-    server.select_folder("INBOX")
+with imapclient.IMAPClient(imap_server) as server:
+  server.login(imap_username, imap_password)
+  server.select_folder("INBOX")
 
-    process_emails(server)
-    logger.debug("Entering IDLE mode.")
-    server.idle()
-
-    while(True):
-      try:
-        logger.debug("IDLE check...")
-        responses = server.idle_check(timeout=20)
-        
-        if responses:
-          logger.debug("Exiting IDLE mode.")
-          server.idle_done()
-          process_emails(server)
-
-          logger.debug("Entering IDLE mode.")
-          server.idle()
-
-      except KeyboardInterrupt:
-        break
-
-    server.idle_done()
-    logger.debug("\nIDLE mode done")
-    server.logout()
+  while True:
+    try: 
+      process_emails(server)
+      time.sleep(10)
+    except KeyboardInterrupt:
+      break
