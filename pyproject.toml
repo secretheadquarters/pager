@@ -6,3 +6,4 @@ version = "0.0.0"
 [tool.poetry.dependencies]
 python = "^3.7"
 imapclient = "^2.1"
+gpiozero = "^1.5"

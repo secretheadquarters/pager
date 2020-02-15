@@ -32,10 +32,6 @@ def command_not_parsed(mail, subject):
   message = "No command found in email subject '" + str(subject) + "'"
   return message
 
-def command_unrecognised(mail, command_name):
-  message = "Command '" + command_name + "' not recognised. "
-  return message
-
 commands = {
   "show": show,
   "info": info,
@@ -48,14 +44,14 @@ commands = {
 # command: The action that should be carried out
 # message: The text inside a "show" command
 
-def process_emails(server):
+def process_emails(server, commands):
   logger.debug("Processing unseen messages...")
   message_ids = server.search("UNSEEN")
   emails = fetch_emails(server, message_ids)
   logger.debug("Unseen: " + str(len(emails)))
 
   for mail in emails:
-    command = get_command(mail)
+    command = get_command(commands, mail)
     result = command(mail)
     send_response(result)
 
@@ -64,22 +60,18 @@ def process_emails(server):
 def fetch_emails(server, message_ids):
   return [email.message_from_bytes(message_data[b'RFC822']) for uid, message_data in server.fetch(message_ids, 'RFC822').items()]
 
-def get_command(mail):
-  # The command is the first word in the subject line. 
-  # Commands are made up of "word" characters as defined by Python regex \w
-  # Commands will be converted to lowercase using the "C" locale
-  # The "info" command is ignored to avoid infinite loops if the pager is replying to its own inbox.
+def get_command(cmmands, mail):
+  # The command is the text at the start of the subject line. 
+  # Commands are matched by case insensitive regex using the "C" locale
+  # Command matches are performed in an arbitrary order, and the first match will be taken.
+  # Commands are passed the email object and can perform further analysis on this as required.
 
   subject = mail.get("Subject")
-  command_name_match = re.match("\w+", subject)
-  if not command_name_match:
-    return lambda mail: command_not_parsed(mail, subject)
-
-  command_name = command_name_match.group(0).lower()
-  if command_name in commands:
-    return commands[command_name]
-  else:
-    return lambda mail: command_unrecognised(mail, command_name)
+  for command_regex in commands.keys():
+    if re.match(command_regex, subject, re.I):
+      return commands[command_regex]
+      
+  return lambda mail: command_not_parsed(mail, subject)
 
 def send_response(result):
   if not result:
@@ -104,7 +96,7 @@ with imapclient.IMAPClient(imap_server) as server:
 
   while True:
     try: 
-      process_emails(server)
+      process_emails(server, commands)
       time.sleep(10)
     except KeyboardInterrupt:
       break
