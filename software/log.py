@@ -7,7 +7,8 @@ logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('%(asctime)s - %(message)s')
 
-fileHandler = logging.handlers.RotatingFileHandler(name + '.log', maxBytes=1048576, backupCount=5)
+log_filename = f"{name}.log"
+fileHandler = logging.handlers.RotatingFileHandler(log_filename, maxBytes=1048576, backupCount=5)
 fileHandler.setLevel(logging.DEBUG)
 fileHandler.setFormatter(formatter)
 

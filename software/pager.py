@@ -9,7 +9,8 @@ import smtplib
 import locale
 locale.setlocale(locale.LC_ALL, "C")
 
-from log import logger
+import log
+logger = log.logger
 
 imap_server = input("IMAP server: ")
 imap_username = input("IMAP username: ")
@@ -27,6 +28,11 @@ def show(mail):
 def info(mail):
   logger.debug("info command - ignoring")
   return None
+  
+def get_logs(mail):
+  with open(log.log_filename) as log_file:
+    message = log_file.read()
+    return message
 
 def command_not_parsed(mail, subject):
   message = "No command found in email subject '" + str(subject) + "'"
@@ -35,6 +41,7 @@ def command_not_parsed(mail, subject):
 commands = {
   "show": show,
   "info": info,
+  "get logs": get_logs,
 }
 
 # Some definitions
