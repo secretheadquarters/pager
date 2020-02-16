@@ -14,7 +14,7 @@ fileHandler.setFormatter(formatter)
 
 # StreamHandler defaults to stderr
 consoleHandler = logging.StreamHandler()
-fileHandler.setFormatter(formatter)
+consoleHandler.setFormatter(formatter)
 
 logger.addHandler(fileHandler)
 logger.addHandler(consoleHandler)

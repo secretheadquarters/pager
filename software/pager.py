@@ -52,20 +52,25 @@ commands = {
 # message: The text inside a "show" command
 
 def process_emails(server, commands):
-  logger.debug("Processing unseen messages...")
-  message_ids = server.search("UNSEEN")
-  emails = fetch_emails(server, message_ids)
-  logger.debug("Unseen: " + str(len(emails)))
+  # It seems that search can get stuck always returning the 
+  # same result (usually 0 messages) if you keep asking the 
+  # same thing. Doing a SELECT to refresh the search results
+  # seems to avoid this. 
+  server.select_folder("INBOX")
+  message_ids = server.search("ALL")
+  uids_and_emails = fetch_emails(server, message_ids)
+  logger.debug("Messages: " + str(len(uids_and_emails)))
 
-  for mail in emails:
+  for uid, mail in uids_and_emails:
     command = get_command(commands, mail)
     result = command(mail)
     send_response(result)
+    move_mail_to_done(server, uid)
 
     logger.debug(mail.get('From') + " " + mail.get('Subject'))
 
-def fetch_emails(server, message_ids):
-  return [email.message_from_bytes(message_data[b'RFC822']) for uid, message_data in server.fetch(message_ids, 'RFC822').items()]
+def fetch_emails(server, uids):
+  return [(uid, email.message_from_bytes(message_data[b'RFC822'])) for uid, message_data in server.fetch(uids, 'RFC822').items()]
 
 def get_command(cmmands, mail):
   # The command is the text at the start of the subject line. 
@@ -97,9 +102,15 @@ def send_response(result):
 
   logger.debug(result)
 
+def move_mail_to_done(server, uid):
+  server.move(uid, "Done")
+
 with imapclient.IMAPClient(imap_server) as server:
   server.login(imap_username, imap_password)
   server.select_folder("INBOX")
+  
+  if not server.folder_exists("Done"):
+    server.create_folder("Done")
 
   while True:
     try: 
