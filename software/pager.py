@@ -7,24 +7,27 @@ import email
 import re
 import smtplib
 
+import hardware
+import config
+
 # Fix the locale so we behave the same in all locations. 
 import locale
 locale.setlocale(locale.LC_ALL, "C")
 
-import log
-logger = log.logger
+from log import logger
 
-imap_server = input("IMAP server: ")
-imap_username = input("IMAP username: ")
-imap_password = input("IMAP password: ")
-smtp_server = input("SMTP server: ")
-smtp_username = input("SMTP username: ")
-smtp_password = input("SMTP password: ")
-smtp_to = input("SMTP to: ")
-smtp_from = input("SMTP from: ")
+imap_server = config.get("IMAP server")
+imap_username = config.get("IMAP username")
+imap_password = config.get("IMAP password")
+smtp_server = config.get("SMTP server")
+smtp_username = config.get("SMTP username")
+smtp_password = config.get("SMTP password")
+smtp_to = config.get("SMTP to")
+smtp_from = config.get("SMTP from")
 
 def show(mail):
   message = mail.get("Subject")
+  hardware.write("Incoming message", message)
   return "Showed message: " + message
 
 def info(mail):
@@ -64,10 +67,13 @@ def process_emails(server, commands):
   logger.debug("Messages: " + str(len(uids_and_emails)))
 
   for uid, mail in uids_and_emails:
-    command = get_command(commands, mail)
-    result = command(mail)
-    send_response(result)
-    move_mail_to_done(server, uid)
+    try:
+      command = get_command(commands, mail)
+      # TODO: Write execute_command which wraps the command in a try finally and returns an "error" result if it fails.
+      result = command(mail)
+      send_response(result)
+    finally:
+      move_mail_to_done(server, uid)
 
     logger.debug(mail.get('From') + " " + mail.get('Subject'))
 
@@ -107,16 +113,24 @@ def send_response(result):
 def move_mail_to_done(server, uid):
   server.move(uid, "Done")
 
-with imapclient.IMAPClient(imap_server) as server:
-  server.login(imap_username, imap_password)
-  server.select_folder("INBOX")
-  
-  if not server.folder_exists("Done"):
-    server.create_folder("Done")
+def main():
+    hardware.clear()
+    hardware.write("TOP SECRET", "Authorised use only.", "^")
 
-  while True:
-    try: 
-      process_emails(server, commands)
-      time.sleep(10)
-    except KeyboardInterrupt:
-      break
+    with imapclient.IMAPClient(imap_server) as server:
+        server.login(imap_username, imap_password)
+        server.select_folder("INBOX")
+  
+        if not server.folder_exists("Done"):
+            server.create_folder("Done")
+
+        while True:
+            try: 
+                process_emails(server, commands)
+                time.sleep(10)
+            except KeyboardInterrupt:
+                break
+            except Exception as ex:
+                logger.debug(ex)
+
+main()
