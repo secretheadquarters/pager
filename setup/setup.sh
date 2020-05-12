@@ -17,9 +17,8 @@ git clone https://github.com/secretheadquarters/pager.git
 
 python -m venv pager/software/venv
 
-if ! crontab -l | grep pager/software/launch.sh; then
-  crontab -l | sed '$ a @reboot pager/software/launch.sh' | crontab
-fi
+crontab -l | sed '/# Pager start/,/# Pager end/d' > crontab.orig
+cat crontab.orig crontab.cron | crontab
 
 sudo raspi-config --expand-rootfs
 whiptail --msgbox "Now please reboot the system" 20 60 2

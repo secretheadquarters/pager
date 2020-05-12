@@ -1,0 +1,5 @@
+# Pager start
+
+@reboot pager/software/launch.sh
+
+# Pager end
